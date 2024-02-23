@@ -203,6 +203,10 @@ divContenidoPerfil.style.justifyContent = "space-around";
 
 //--mensaje --------------------------------
 divMensaje.style.backgroundColor = color1;
+//divMensaje.style.position = "relative";
+//divMensaje.style.flexDirection = "column-reverse";
+//divMensaje.style.display = "flex";
+
 
 //--contenidoChat --------------------------------
 
@@ -224,7 +228,7 @@ divArribaUsers.id="arribaUsers"
 
 // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE UNA PETICION ASINCRONA
 async function optenerPosts(){
-    let data = await fetch('https://jsonplaceholder.typicode.com/posts',
+    let data = await fetch('http://uwu-guate.site:3000/messages',
     {
         method: 'GET',
         headers: {
@@ -238,11 +242,19 @@ async function optenerPosts(){
     return posts;
 }
 
-function crearChat(texto, id){
+function Usuarios(texto, id){
     let nuevoChat = document.createElement("div");
     nuevoChat.className = "chat";
     nuevoChat.id = id;
     nuevoChat.innerText = texto;
+    return nuevoChat;
+}
+
+function crearChat(id, userName, text, date){
+    let nuevoChat = document.createElement("div");
+    nuevoChat.className = "chat";
+    nuevoChat.id = id;
+    nuevoChat.innerText = text;
     return nuevoChat;
 }
 
@@ -256,7 +268,7 @@ async function crearListoDeChats(){
     if(divListadoChats != null){
         // transformamos los dicccionarios a un div de chat
         misPosts.map(post=>{
-            let nuevoChat = crearChat(post.title, post.id);
+            let nuevoChat = Usuarios(post[1], post[0]);
             return nuevoChat
         })
         // recorremos los nuevos chats y los agremos al div de listados
@@ -285,12 +297,13 @@ function MandarMensaje(){
     let divMensajeContenedor = DOM.createElement("div");
     divMensajeContenedor.style.backgroundColor = color4;
     divMensajeContenedor.style.width = "97.6%";
-    divMensajeContenedor.style.minHeight = "60px";
+    divMensajeContenedor.style.minHeight = "40px";
     divMensajeContenedor.style.borderRadius = "2px";
     divMensajeContenedor.style.border = "1px solid 'var(--color-border)";
     divMensajeContenedor.style.marginBottom = "8px";
     divMensajeContenedor.style.flexDirection = "column";
-
+    divMensajeContenedor.style.display = "flex";
+    divMensajeContenedor.style.position = "relative";
 
     let info = document.createElement("h4");
     divMensajeContenedor.innerHTML = mensajeValue;
@@ -299,8 +312,6 @@ function MandarMensaje(){
     info.style.fontSize= "20px" ;
     //divMensajeContenedor.appendChild(userName);
     divMensaje.appendChild(divMensajeContenedor);
-
-    
 
 }
 
