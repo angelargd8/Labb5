@@ -258,29 +258,23 @@ async function obtenerPosts(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA 
 
 
 //---Post posts--------------------------------
-async function enviarPosts(mensaje){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE UNA PETICION ASINCRONA
-    try{
-        let data = await fetch('http://uwu-guate.site:3000/messages',
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }, 
-            body: JSON.stringify(mensaje)
-        })    
-        
-        if(!data.ok){
-            throw new Error(`HTTP error! status: ${data.status}`);
+async function obtenerPosts(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE UNA PETICION ASINCRONA
+    let data = await fetch('http://uwu-guate.site:3000/messages',
+    {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         }
-        //console.log("await", data);
-        let posts = await data.json();
-        console.log(posts);
+    })    
     
-        return posts;
-    }catch(error){
-        console.error('Error:', error);
+    if(!respuesta.ok){
+        throw new Error(`HTTP error! status: ${respuesta.status}`);
     }
-    
+    //console.log("await", data);
+    let posts = await data.json();
+    console.log(posts);
+
+    return posts;
 }
 
 //---Usuarios--------------------------------
@@ -387,23 +381,9 @@ async function ListaChats(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE
 
 async function MandarMensaje(){
     let mensajeValue = document.getElementById("mensaje-chat").value;
-    let fechaHora = new Date();
-    let fechaHoraString = fechaHora.toISOString();
-    //bjeto mensaje
-    let mensaje ={
-        "username": usuario,
-        "message": mensajeValue
-        //fecha: fechaHoraString
-    }
+    
+    
 
-    //enviar mensaje a la api
-    let post = await enviarPosts(mensaje);
-    console.log(post);
-
-    //acceder al id del mensaje que se esta creando
-    //acceder al ID del nuevo mensajes
-    //let id = post.id;
-    //console.log(id);
 
     let divMensajeContenedor = DOM.createElement("div");
     divMensajeContenedor.style.backgroundColor = color4;
