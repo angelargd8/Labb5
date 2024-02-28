@@ -13,17 +13,19 @@ const rootStyles = `
     --color-fondo: #f7ebfd;
     --color-fondo-oscuro: #6F2DBD;
     --color-primario: #757bc8;
-    --color-secundario: #757bc8;
+    --color-secundario: #bbadff44;
     --color-terciario: #757bc8;
     --color-cuaternario: #bbadff;
     --color-chat: #9fa0ff;
-    --fuente-x: 'Times New Roman', Times, serif;
+    --fuente-x: 'Arial', sans-serif;
 }
 `;
+//--fuente-x: 'Verdana', sans-serif;
 const colorFondo= 'var(--color-fondo)';
 const colorFondoOscuro = 'var(--color-fondo-oscuro)';
 const colorBorder = 'var(--color-border)';
 const color1 = 'var(--color-primario)';
+const color2 = 'var(--color-secundario)';
 const color4 = 'var(--color-cuaternario)';
 const colorChat = 'var(--color-chat)';
 
@@ -34,7 +36,7 @@ const styleElement = DOM.createElement("style");
 styleElement.innerHTML = rootStyles;
 DOM.head.appendChild(styleElement); 
 
-document.body.style.backgroundColor = colorFondo;
+document.body.style.backgroundColor = colorFondoOscuro;
 
 
 //elementos
@@ -139,10 +141,10 @@ BotonModo.addEventListener("mouseout", function() {
 
 BotonModo.addEventListener('click', () => {
   // Cambiar el color de fondo al color opuesto
-  if (document.body.style.backgroundColor === colorFondo) {
-    document.body.style.backgroundColor = colorFondoOscuro;
-  } else {
+  if (document.body.style.backgroundColor === colorFondoOscuro) {
     document.body.style.backgroundColor = colorFondo;
+  } else {
+    document.body.style.backgroundColor = colorFondoOscuro;
   }
 });
 
@@ -150,7 +152,7 @@ BotonModo.addEventListener('click', () => {
 //-userName-------------------------------------
 const userName = document.createElement("h4");
 userName.style.fontFamily = "var(--fuente-x)";
-userName.style.color="black";
+userName.style.color="white";
 userName.style.textAlign="center";
 userName.innerHTML = usuario;
 
@@ -176,7 +178,7 @@ divContenidoPerfil.appendChild(BotonModo)
 
 //cambio de las propiedades
 //--contenedor --------------------------------
-divContenedor.style.backgroundColor= colorFondo;
+divContenedor.style.backgroundColor= colorFondoOscuro;
 divContenedor.style.height="calc(95vh - 0px)";
 divContenedor.style.display="grid";
 divContenedor.style.fontFamily="var(--fuente-x)";
@@ -202,7 +204,7 @@ divArribaUsers.style.flexDirection = "column";
 divArribaUsers.height = "20%";
 divArribaUsers.width = "80%";
 divArribaUsers.style.border = "1px solid 'var(--color-border)";
-divArribaUsers.innerHTML = "<center><h4 style='color: white;'>Usuarios</h4>";
+divArribaUsers.innerHTML = "<center><h4 style='color: #420888fa;'>Usuarios</h4>";
 
 //--ContenidoPerfil --------------------------------
 
@@ -213,11 +215,6 @@ divContenidoPerfil.style.justifyContent = "space-around";
 
 //--mensaje --------------------------------
 divMensaje.style.backgroundColor = color1;
-//divMensaje.style.position = "relative";
-//divMensaje.style.flexDirection = "column";
-//divMensaje.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});//
-//divMensaje.style.display = "flex";
-// Desplazar la vista al último hijo del contenedor
 
 
 //--contenidoChat --------------------------------
@@ -293,7 +290,7 @@ function Usuarios(id,nombre){
         let nuevoUser = document.createElement("div");
         nuevoUser.className = "user";
         nuevoUser.id = id;
-        nuevoUser.innerText = nombre;
+        nuevoUser.innerHTML = '<center><span style="color: #ffffffcb"> '+ nombre+ '</span>';
 
         //agregar el nombre al objeto de usuarios de hasta arriba
         usuarios[nombre] = true;
@@ -342,7 +339,28 @@ function ObtenerChats(id, userName, texto, date){
     let nuevoChat = document.createElement("div");
     nuevoChat.className = "chat";
     nuevoChat.id = id;
-    nuevoChat.innerHTML = `${userName} :<br> ${texto} <br> ${date}`;
+
+    let urlRegex= /(https?:\/\/[^\s]+)/g; 
+
+    texto = texto.replace(urlRegex, function(url) {
+        let imageRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpeg|jpg|gif|png)/g;
+
+        if (imageRegex.test(url)){
+            return '<img src="' + url + '" alt="imagen"  style="max-width: 30%; max-height: 30%;"/>';
+        }
+                
+        else{
+            return '<iframe src="'+ url +'" style="max-width: 90%; max-height: 50%;"></iframe>';
+            //return '<a href="' + url + '" target="_blank">' + url + '</a>';
+        }
+
+    });    
+    
+
+    //nuevoChat.innerHTML = `${userName} ${date} <br> ${texto} `;
+    nuevoChat.innerHTML = '<span style="color: white;">' + userName +
+    '</span> <span style="color: #fbfaff7e; font-size: 0.8em;">' + date + '</span><br> <span style="color: white;">' + texto + '</span>';
+
     return nuevoChat;
 }
 
@@ -364,15 +382,18 @@ async function ListaChats(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE
             //verifica que si el usuario es null (repetido)
             if(element!== null){
                 let divChatContenedor = DOM.createElement('div');
-                divChatContenedor.style.backgroundColor = color4;
-                divChatContenedor.style.width = "97.6%";
+                divChatContenedor.style.backgroundColor = color2;
+                divChatContenedor.style.maxwidth = "97.6%";
                 divChatContenedor.style.minHeight = "40px";
                 divChatContenedor.style.borderRadius = "2px";
                 divChatContenedor.style.border = "1px solid 'var(--color-border)";
                 divChatContenedor.style.marginBottom = "8px";
                 divChatContenedor.style.flexDirection = "column";
                 divChatContenedor.style.padding = "10px";
-                
+                //divChatContenedor.style.overflow = "clip";
+                divChatContenedor.style.overflow = "auto";//??
+            
+
                 divChatContenedor.appendChild(element);
                 divMensaje.appendChild(divChatContenedor);
                 divMensaje.lastChild.scrollIntoView({behavior: "smooth", block: "end",inline: "end"});
@@ -387,38 +408,24 @@ async function ListaChats(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE
 
 async function MandarMensaje(){
     let mensajeValue = document.getElementById("mensaje-chat").value;
-    let fechaHora = new Date();
-    let fechaHoraString = fechaHora.toISOString();
-    //bjeto mensaje
-    let mensaje ={
-        "username": usuario,
-        "message": mensajeValue
-        //fecha: fechaHoraString
+    if (mensajeValue !== ""){
+        //bjeto mensaje
+        let mensaje ={
+            "username": usuario,
+            "message": mensajeValue
+            //fecha: fechaHoraString
+        }
+
+        //enviar mensaje a la api
+        let post = await enviarPosts(mensaje);
+        console.log(post);
+        ListaChats()
+
+    }else{
+        alert("no se ingreso ningún mensaje")
     }
-
-    //enviar mensaje a la api
-    let post = await enviarPosts(mensaje);
-    console.log(post);
-
-    //acceder al id del mensaje que se esta creando
-    //acceder al ID del nuevo mensajes
-    //let id = post.id;
-    //console.log(id);
-
-    let divMensajeContenedor = DOM.createElement("div");
-    divMensajeContenedor.style.backgroundColor = color4;
-    divMensajeContenedor.style.width = "97.6%";
-    divMensajeContenedor.style.minHeight = "40px";
-    divMensajeContenedor.style.borderRadius = "2px";
-    divMensajeContenedor.style.border = "1px solid 'var(--color-border)";
-    divMensajeContenedor.style.marginBottom = "8px";
-    divMensajeContenedor.style.flexDirection = "column";
-    divMensajeContenedor.style.display = "flex";
-    divMensajeContenedor.style.position = "relative";
-
-    divMensajeContenedor.innerHTML =  `${usuario} :<br> ${mensajeValue}`;
-    divMensajeContenedor.style.padding = "10px";
-    divMensaje.appendChild(divMensajeContenedor);
+    
+    
 
 }
 

@@ -257,25 +257,6 @@ async function obtenerPosts(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA 
 }
 
 
-//---Post posts--------------------------------
-async function obtenerPosts(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE UNA PETICION ASINCRONA
-    let data = await fetch('http://uwu-guate.site:3000/messages',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })    
-    
-    if(!respuesta.ok){
-        throw new Error(`HTTP error! status: ${respuesta.status}`);
-    }
-    //console.log("await", data);
-    let posts = await data.json();
-    console.log(posts);
-
-    return posts;
-}
 
 //---Usuarios--------------------------------
 function Usuarios(id,nombre){
@@ -379,26 +360,40 @@ async function ListaChats(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE
 
 
 
+
 async function MandarMensaje(){
     let mensajeValue = document.getElementById("mensaje-chat").value;
+    if (mensajeValue !== ""){
+        //bjeto mensaje
+        let mensaje ={
+            "username": usuario,
+            "message": mensajeValue
+            //fecha: fechaHoraString
+        }
+
+        //enviar mensaje a la api
+        let post = await enviarPosts(mensaje);
+        console.log(post);
+
+        let divMensajeContenedor = DOM.createElement("div");
+        divMensajeContenedor.style.backgroundColor = color2;
+        divMensajeContenedor.style.width = "97.6%";
+        divMensajeContenedor.style.minHeight = "40px";
+        divMensajeContenedor.style.borderRadius = "2px";
+        divMensajeContenedor.style.border = "1px solid 'var(--color-border)";
+        divMensajeContenedor.style.marginBottom = "8px";
+        divMensajeContenedor.style.flexDirection = "column";
+        divMensajeContenedor.style.display = "flex";
+        divMensajeContenedor.style.position = "relative";
+
+        divMensajeContenedor.innerHTML =  `${usuario} :<br> ${mensajeValue}`;
+        divMensajeContenedor.style.padding = "10px";
+        divMensaje.appendChild(divMensajeContenedor);
+    }else{
+        alert("no se ingreso ningún mensaje")
+    }
     
     
-
-
-    let divMensajeContenedor = DOM.createElement("div");
-    divMensajeContenedor.style.backgroundColor = color4;
-    divMensajeContenedor.style.width = "97.6%";
-    divMensajeContenedor.style.minHeight = "40px";
-    divMensajeContenedor.style.borderRadius = "2px";
-    divMensajeContenedor.style.border = "1px solid 'var(--color-border)";
-    divMensajeContenedor.style.marginBottom = "8px";
-    divMensajeContenedor.style.flexDirection = "column";
-    divMensajeContenedor.style.display = "flex";
-    divMensajeContenedor.style.position = "relative";
-
-    divMensajeContenedor.innerHTML =  `${usuario} :<br> ${mensajeValue}`;
-    divMensajeContenedor.style.padding = "10px";
-    divMensaje.appendChild(divMensajeContenedor);
 
 }
 
