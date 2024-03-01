@@ -246,7 +246,7 @@ async function obtenerPosts(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA 
             'Content-Type': 'application/json'
         }
     })    
-    console.log("await", data);
+    //console.log("await", data);
     let posts = await data.json();
     console.log(posts);
 
@@ -308,14 +308,11 @@ async function ListaUsuarios(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA
     // mando a traer el div donde quiero poner los chats
     //let divListados = DOM.getElementById("listado-chats");
     if(divListadoUsers != null){
-        // transformamos los dicccionarios a un div de chat
         misPosts.map(post=>{
-            let nuevoUser = Usuarios(post[0], post[1]);
+            let nuevoUser = Usuarios(post.id, post.username);
             return nuevoUser
         })
-        // recorremos los nuevos chats y los agremos al div de listados
         .forEach(element => {
-            //verifica que si el usuario es null (repetido)
             if(element!== null){
                 let divUsuariosContenedor = DOM.createElement('div');
                 divUsuariosContenedor.style.backgroundColor = colorChat;
@@ -334,32 +331,89 @@ async function ListaUsuarios(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA
 
 }
 
+
 //---ObtenerChats--------------------------------
-function ObtenerChats(id, userName, texto, date){
+function ObtenerChats(id, userName, texto){
     let nuevoChat = document.createElement("div");
     nuevoChat.className = "chat";
     nuevoChat.id = id;
+    nuevoChat.innerHTML = '';
 
     let urlRegex= /(https?:\/\/[^\s]+)/g; 
 
     texto = texto.replace(urlRegex, function(url) {
         let imageRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpeg|jpg|gif|png)/g;
 
-        if (imageRegex.test(url)){
-            return '<img src="' + url + '" alt="imagen"  style="max-width: 30%; max-height: 30%;"/>';
+        if(urlRegex.test(url)){
+            if (imageRegex.test(url)){
+                return '<img src="' + url + '" alt="imagen"  style="max-width: 30%; max-height: 30%;"/>';
+            }
+                    
+            else{
+                //vistaPrevia(url)
+    
+                fetch('https://api.linkpreview.net/?q=' + url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Linkpreview-Api-Key': '1298ee1976b7c8d404364ccdb9b302ec'
+                        //llaves
+                        /**
+                         * 09571309e0964012199d284078e145cf
+                         * 45a9a02128558b7b3c1ad75835ad068a
+                         * add95786ca6d6b2160d49dcd24163108
+                         * 1298ee1976b7c8d404364ccdb9b302ec
+                         */
+
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('HTTP error ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.title) {
+                        let preview = data;
+                        //nuevoChat.innerHTML += '<a href="' + url + '" target="_blank">' + preview.title +  preview.image + '</a>';
+                        console.log(preview);
+                        texto="";
+                        console.log("ESTO ES EL TITULO:"+preview.title)
+                        let title = preview.title ? preview.title : '';
+                        let image = preview.image ? '<img src="' + preview.image + '" alt="imagen" style="max-width: 90%; max-height: 50%;" />' : '';
+
+                        nuevoChat.innerHTML += '<a href="' + url + '" target="_blank">' + title + image + '</a>';
+                        //nuevoChat.innerHTML += '<a href="' + url + '" target="_blank">' + preview.title + '<img src="' + preview.image + '" alt="imagen" style="max-width: 90%; max-height: 50%;" /></a>';
+                    } else {
+                        console.log('Title not found');
+                    }
+                })
+                .catch(error => console.error('Error:', "error"));
+                        
+    
+                //return '<iframe src="'+ url +'" style="max-width: 90%; max-height: 80%;"></iframe>';
+                //return '<a href="' + url + '" target="_blank">' + url + '</a>';
+            }
         }
-                
         else{
-            return '<iframe src="'+ url +'" style="max-width: 90%; max-height: 50%;"></iframe>';
-            //return '<a href="' + url + '" target="_blank">' + url + '</a>';
-        }
+            nuevoChat.innerHTML = '<span style="color: white;">' + userName +
+            '</span> <span style="color: #fbfaff7e; font-size: 0.8em;">'  + '</span><br><br> <span style="color: white;">' + texto + '</span>';
+        }        
 
     });    
     
 
     //nuevoChat.innerHTML = `${userName} ${date} <br> ${texto} `;
     nuevoChat.innerHTML = '<span style="color: white;">' + userName +
+    '</span> <span style="color: #fbfaff7e; font-size: 0.8em;">'  + '</span><br><br> <span style="color: white;">' + texto + '</span>';
+
+
+    /**
+    nuevoChat.innerHTML = '<span style="color: white;">' + userName +
     '</span> <span style="color: #fbfaff7e; font-size: 0.8em;">' + date + '</span><br> <span style="color: white;">' + texto + '</span>';
+      
+     */
 
     return nuevoChat;
 }
@@ -372,9 +426,11 @@ async function ListaChats(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE
     //let divListados = DOM.getElementById("listado-chats");
     if(divListadoUsers != null){
         // transformamos los dicccionarios a un div de chat
-        misPosts = misPosts.reverse();
+        //misPosts = misPosts.reverse();
         misPosts.map(post=>{
-            let Chat = ObtenerChats(post[0], post[1],post[2], post[3]);
+            let Chat = ObtenerChats(post.id, post.username, post.content);
+            //let Chat = ObtenerChats(post[0], post[1],post[2], post[3]);
+
             return Chat
         })
         // recorremos los nuevos chats y los agremos al div de listados
@@ -384,7 +440,8 @@ async function ListaChats(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE
                 let divChatContenedor = DOM.createElement('div');
                 divChatContenedor.style.backgroundColor = color2;
                 divChatContenedor.style.maxwidth = "97.6%";
-                divChatContenedor.style.minHeight = "40px";
+                divChatContenedor.style.minHeight = "50px";
+                //divChatContenedor.style.maxHeight = "80%";
                 divChatContenedor.style.borderRadius = "2px";
                 divChatContenedor.style.border = "1px solid 'var(--color-border)";
                 divChatContenedor.style.marginBottom = "8px";
@@ -396,7 +453,7 @@ async function ListaChats(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA DE
 
                 divChatContenedor.appendChild(element);
                 divMensaje.appendChild(divChatContenedor);
-                divMensaje.lastChild.scrollIntoView({behavior: "smooth", block: "end",inline: "end"});
+                divMensaje.lastChild.scrollIntoView({block: "end"});
 
             }        
         });
@@ -418,8 +475,9 @@ async function MandarMensaje(){
 
         //enviar mensaje a la api
         let post = await enviarPosts(mensaje);
-        console.log(post);
+        //console.log(post);
         ListaChats()
+        divMensaje.lastChild.scrollIntoView({behavior: "smooth", block: "end",inline: "end"});
 
     }else{
         alert("no se ingreso ningún mensaje")
@@ -431,3 +489,5 @@ async function MandarMensaje(){
 
 ListaUsuarios();
 ListaChats();
+//setInterval(ListaChats, 15000);
+setInterval(ListaUsuarios, 90000);
