@@ -443,7 +443,7 @@ function ObtenerChats(id, userName, texto){
                         
                     }
                     //validacion por si sale undefined por que solicite mucho a la api conuna misma key
-                    alert("Too Many Request on the API, try another key"); 
+                    alert("Too Many Request on the API, try another key (la api no jalo, no jala másde 60 solicitudes por hora)"); 
 
                     return response.json();
                 })
