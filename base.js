@@ -332,13 +332,66 @@ async function ListaUsuarios(){ // ASYNC AWAIT - ME PERMITE ESPERAR LA RESPUESTA
 }
 
 
+async function vistaPrevia(url){
+    //let url = "https://www.youtube.com/watch?v=5qap5aO4i9A";
+    const request= `https://api.linkpreview.net/?fields=image_x,icon_type,locale&q=${url}`
+    const pagina = await fetch(request, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Linkpreview-Api-Key': '09571309e0964012199d284078e145cf'
+        }
+    })
+
+    const urlInfo = await pagina.json()
+    
+    console.log(urlInfo);
+    return urlInfo;    
+
+}
+
+
+async function vistaPrevia(url){
+    const request= `https://api.linkpreview.net/?fields=image_x,icon_type,locale&q=${url}`
+    const pagina = await fetch(request, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Linkpreview-Api-Key': '09571309e0964012199d284078e145cf'
+        }
+    })
+
+    const urlInfo = await pagina.json()
+    console.log(urlInfo);
+}
+
+
 //---ObtenerChats--------------------------------
 function ObtenerChats(id, userName, texto){
     let nuevoChat = document.createElement("div");
     nuevoChat.className = "chat";
     nuevoChat.id = id;
-    nuevoChat.innerHTML = '';
+    //nuevoChat.innerHTML = '';
+    nuevoChat.style.flexDirection = "column";
 
+    //objetos xd
+    let spanUserName = document.createElement('span');
+    spanUserName.style.color = 'white';
+    spanUserName.textContent = userName;
+
+    let spanTexto = document.createElement('span');
+    spanTexto.style.color = 'white';
+
+    let espacio = document.createElement('br');
+    let imagen = document.createElement('img');
+
+    let paginas = document.createElement('iframe');
+    
+    nuevoChat.appendChild(spanUserName);
+    nuevoChat.appendChild(espacio);
+    nuevoChat.appendChild(espacio);
+
+    //regex
     let urlRegex= /(https?:\/\/[^\s]+)/g; 
 
     texto = texto.replace(urlRegex, function(url) {
@@ -346,17 +399,35 @@ function ObtenerChats(id, userName, texto){
 
         if(urlRegex.test(url)){
             if (imageRegex.test(url)){
-                return '<img src="' + url + '" alt="imagen"  style="max-width: 30%; max-height: 30%;"/>';
+                
+                imagen.src = url;
+                imagen.alt = "imagen";
+                imagen.style.maxWidth = "30%";
+                imagen.style.maxHeight = "30%";
+                nuevoChat.appendChild(imagen);
+                return '';
             }
                     
             else{
-                //vistaPrevia(url)
-    
+                //vistaPrevia(url)/*.then(response =>{
+                    
+                //})
+                //vistaPrevia(url).then(dta =>{})
+                /*     
+                paginas.src = url;
+                paginas.style.maxWidth = "90%";
+                paginas.style.maxHeight = "80%";
+                nuevoChat.appendChild(paginas);
+                return '';
+                */
+                //return '<a href="' + url + '" target="_blank">' + url + '</a>';
+
+                ///desdeaca
                 fetch('https://api.linkpreview.net/?q=' + url, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-Linkpreview-Api-Key': '1298ee1976b7c8d404364ccdb9b302ec'
+                        'X-Linkpreview-Api-Key': '09571309e0964012199d284078e145cf'
                         //llaves
                         /**
                          * 09571309e0964012199d284078e145cf
@@ -369,52 +440,39 @@ function ObtenerChats(id, userName, texto){
                 })
                 .then(response => {
                     if (!response.ok) {
+                        console.log("HOLAHOLAHOLA22222");
                         throw new Error('HTTP error ' + response.status);
                     }
                     return response.json();
                 })
                 .then(data => {
+                    console.log("HOLAHOLAHOLA1111");
                     if (data && data.title) {
                         let preview = data;
-                        //nuevoChat.innerHTML += '<a href="' + url + '" target="_blank">' + preview.title +  preview.image + '</a>';
-                        console.log(preview);
-                        texto="";
-                        console.log("ESTO ES EL TITULO:"+preview.title)
-                        let title = preview.title ? preview.title : '';
-                        let image = preview.image ? '<img src="' + preview.image + '" alt="imagen" style="max-width: 90%; max-height: 50%;" />' : '';
-
-                        nuevoChat.innerHTML += '<a href="' + url + '" target="_blank">' + title + image + '</a>';
-                        //nuevoChat.innerHTML += '<a href="' + url + '" target="_blank">' + preview.title + '<img src="' + preview.image + '" alt="imagen" style="max-width: 90%; max-height: 50%;" /></a>';
+                        console.log("HOLAHOLAHOLA");
+                        console.log(preview.title, preview.image);
+                        
+                        spanTexto.textContent = preview.title;
+                        nuevoChat.appendChild(spanTexto);
+                        nuevoChat.appendChild(espacio);
+                        imagen.src = preview.image;
+                        imagen.alt = "imagen";
+                        imagen.style.maxWidth = "30%";
+                        imagen.style.maxHeight = "30%";
+                        nuevoChat.appendChild(imagen);
                     } else {
                         console.log('Title not found');
                     }
                 })
-                .catch(error => console.error('Error:', "error"));
-                        
-    
-                //return '<iframe src="'+ url +'" style="max-width: 90%; max-height: 80%;"></iframe>';
-                //return '<a href="' + url + '" target="_blank">' + url + '</a>';
+                .catch(error => console.error('Error:', error));
+
             }
-        }
-        else{
-            nuevoChat.innerHTML = '<span style="color: white;">' + userName +
-            '</span> <span style="color: #fbfaff7e; font-size: 0.8em;">'  + '</span><br><br> <span style="color: white;">' + texto + '</span>';
-        }        
+        }    
 
     });    
-    
 
-    //nuevoChat.innerHTML = `${userName} ${date} <br> ${texto} `;
-    nuevoChat.innerHTML = '<span style="color: white;">' + userName +
-    '</span> <span style="color: #fbfaff7e; font-size: 0.8em;">'  + '</span><br><br> <span style="color: white;">' + texto + '</span>';
-
-
-    /**
-    nuevoChat.innerHTML = '<span style="color: white;">' + userName +
-    '</span> <span style="color: #fbfaff7e; font-size: 0.8em;">' + date + '</span><br> <span style="color: white;">' + texto + '</span>';
-      
-     */
-
+    spanTexto.textContent = texto;
+    nuevoChat.appendChild(spanTexto);
     return nuevoChat;
 }
 
