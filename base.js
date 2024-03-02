@@ -409,10 +409,7 @@ function ObtenerChats(id, userName, texto){
             }
                     
             else{
-                //vistaPrevia(url)/*.then(response =>{
-                    
-                //})
-                //vistaPrevia(url).then(dta =>{})
+                //AQUI con lo de iframe, pero como no se pede xd
                 /*     
                 paginas.src = url;
                 paginas.style.maxWidth = "90%";
@@ -442,7 +439,12 @@ function ObtenerChats(id, userName, texto){
                     if (!response.ok) {
                         console.log("HOLAHOLAHOLA22222");
                         throw new Error('HTTP error ' + response.status);
+                        
+                        
                     }
+                    //validacion por si sale undefined por que solicite mucho a la api conuna misma key
+                    alert("Too Many Request on the API, try another key"); 
+
                     return response.json();
                 })
                 .then(data => {
