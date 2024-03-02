@@ -438,12 +438,13 @@ function ObtenerChats(id, userName, texto){
                 .then(response => {
                     if (!response.ok) {
                         console.log("HOLAHOLAHOLA22222");
+                        spanTexto.textContent = "URL inválida por linkpreview.net";
                         throw new Error('HTTP error ' + response.status);
                         
                         
                     }
                     //validacion por si sale undefined por que solicite mucho a la api conuna misma key
-                    alert("Too Many Request on the API, try another key (la api no jalo, no jala másde 60 solicitudes por hora)"); 
+                    //alert("Too Many Request on the API, try another key (la api no jalo, no jala másde 60 solicitudes por hora)"); 
 
                     return response.json();
                 })
@@ -549,5 +550,5 @@ async function MandarMensaje(){
 
 ListaUsuarios();
 ListaChats();
-//setInterval(ListaChats, 15000);
+setInterval(ListaChats, 15000);
 setInterval(ListaUsuarios, 90000);
